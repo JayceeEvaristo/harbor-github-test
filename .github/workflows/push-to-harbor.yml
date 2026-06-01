@@ -1,0 +1,27 @@
+name: Build and Push to Harbor
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Docker
+        run: docker version
+
+      - name: Login to Harbor
+        run: docker login 10.190.101.101:80 -u ${{ secrets.HARBOR_USERNAME }} -p ${{ secrets.HARBOR_PASSWORD }}
+
+      - name: Build Docker image
+        run: docker build -t 10.190.101.101:80/iemms/github-test:latest .
+
+      - name: Push Docker image
+        run: docker push 10.190.101.101:80/iemms/github-test:latest
